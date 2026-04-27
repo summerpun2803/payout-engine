@@ -1,0 +1,19 @@
+{
+  "services": {
+    "backend": {
+      "rootDirectory": "backend",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "gunicorn payout_engine.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+    },
+    "frontend": {
+      "rootDirectory": "frontend",
+      "buildCommand": "npm ci && npm run build",
+      "startCommand": "npx serve -s dist -l $PORT"
+    },
+    "worker": {
+      "rootDirectory": "backend",
+      "buildCommand": "pip install -r requirements.txt",
+      "startCommand": "celery -A payout_engine worker -l info -c 2"
+    }
+  }
+}
