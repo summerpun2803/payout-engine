@@ -1,0 +1,72 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: payout_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+
+  backend:
+    build: ./backend
+    command: daphne -b 0.0.0.0 -p 8000 payout_engine.asgi:application
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8080:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - DJANGO_SETTINGS_MODULE=payout_engine.settings
+
+  worker:
+    build: ./backend
+    command: celery -A payout_engine worker -l info -c 2
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - DJANGO_SETTINGS_MODULE=payout_engine.settings
+
+  beat:
+    build: ./backend
+    command: celery -A payout_engine beat -l info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      - DJANGO_SETTINGS_MODULE=payout_engine.settings
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://localhost:8080/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
