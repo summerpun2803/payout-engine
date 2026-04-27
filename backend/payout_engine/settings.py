@@ -11,19 +11,19 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'payout_engine.urls'
-WSGI_APPLICATION = 'payout_engine.wsgi.application'  # ✅ Critical for Gunicorn
+WSGI_APPLICATION = 'payout_engine.wsgi.application'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'django.contrib.sessions',  # ✅ Required for auth middleware
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'merchants',  # ✅ Must be present
+    'merchants',  # ✅ Your app - must be listed
 ]
 
 MIDDLEWARE = [
@@ -32,6 +32,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',  # ✅ MUST come before auth
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

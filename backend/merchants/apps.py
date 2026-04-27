@@ -1,3 +1,4 @@
+# backend/merchants/apps.py
 from django.apps import AppConfig
 
 class MerchantsConfig(AppConfig):
