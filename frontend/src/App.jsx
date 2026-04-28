@@ -230,10 +230,6 @@ export default function App() {
             ) : (
               <p className="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight">{formatCurrency(balance)}</p>
             )}
-            <p className="text-xs text-slate-400 mt-3 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              Auto-refreshes every 5 seconds
-            </p>
           </div>
 
           {/* Payout Form */}
