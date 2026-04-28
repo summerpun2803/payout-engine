@@ -152,7 +152,6 @@ export default function App() {
             ) : (
               <p className="text-4xl font-bold text-slate-900">{formatCurrency(balance)}</p>
             )}
-            <p className="text-xs text-slate-400 mt-2">Updated automatically every 5 seconds</p>
           </div>
 
           {/* Payout Form */}
