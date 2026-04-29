@@ -38,6 +38,14 @@ def create_payout(request):
             defaults={'response_data': {'status': 'IN_FLIGHT'}}
         )
         if not created:
+            if 'id' in ik.response_data:
+                
+                from .models import Payout
+                live_payout = Payout.objects.get(id=ik.response_data['id'])
+                # Return cached response but with updated status
+                updated = {**ik.response_data, 'status': live_payout.status}
+                return Response(updated, status=200)
+            
             return Response(ik.response_data, status=200 if ik.response_data.get('status') != 'IN_FLIGHT' else 202)
 
         merchant = Merchant.objects.select_for_update().get(id=merchant_id)
