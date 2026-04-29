@@ -39,7 +39,6 @@ def create_payout(request):
         )
         if 'id' in ik.response_data:
             try:
-                from .models import Payout
                 live_payout = Payout.objects.get(id=ik.response_data['id'])
                 # Return cached response but with updated status
                 updated = {**ik.response_data, 'status': live_payout.status}
